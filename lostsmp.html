@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOST SMP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --red:#B30000;
+  --red-dim:#6B0000;
+  --red-glow:#CC0000;
+  --black:#060606;
+  --surface:#0E0E0E;
+  --surface2:#141414;
+  --line:#1E1E1E;
+  --text:#C8C4BC;
+  --text-muted:#5A5A5A;
+  --text-dim:#333;
+  --white:#E8E4DC;
+}
+
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Space Mono',monospace;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--red-dim)}
+
+/* ── NAV ──────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:56px;
+  background:rgba(6,6,6,0.9);
+  border-bottom:1px solid var(--line);
+}
+.nav-id{
+  font-family:'Oswald',sans-serif;
+  font-size:15px;font-weight:500;
+  letter-spacing:6px;
+  color:var(--white);
+}
+.nav-id em{color:var(--red);font-style:normal}
+.nav-menu{display:flex;align-items:center;gap:36px;list-style:none}
+.nav-menu a{
+  font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--text-muted);
+  text-decoration:none;transition:color .15s;
+}
+.nav-menu a:hover{color:var(--text)}
+.nav-pill{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  text-decoration:none;color:var(--red-glow);
+  border:1px solid var(--red-dim);
+  padding:7px 16px;transition:all .15s;
+}
+.nav-pill:hover{background:var(--red-dim);color:#fff}
+
+/* ── HERO ─────────────────────────────── */
+#home{
+  min-height:100vh;position:relative;
+  display:grid;grid-template-columns:1fr 1fr;
+  padding-top:56px;overflow:hidden;
+}
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 48px 80px 80px;
+  position:relative;z-index:2;
+  border-right:1px solid var(--line);
+}
+.hero-status{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--red);margin-bottom:32px;
+  display:flex;align-items:center;gap:10px;
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red-glow);
+  animation:blink 1.8s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero-h1{
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(64px,8vw,108px);
+  font-weight:700;line-height:.92;
+  letter-spacing:-2px;
+  color:var(--white);
+  margin-bottom:36px;
+}
+.hero-h1 .accent{color:var(--red)}
+
+.hero-text{
+  font-size:13px;line-height:2;
+  color:var(--text-muted);max-width:420px;
+  margin-bottom:48px;
+  font-style:italic;
+}
+
+.hero-actions{display:flex;gap:12px}
+.btn-fill{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  text-decoration:none;
+  background:var(--red);color:#fff;
+  padding:14px 28px;border:none;cursor:pointer;
+  transition:background .15s;
+}
+.btn-fill:hover{background:var(--red-glow)}
+.btn-line{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  text-decoration:none;color:var(--text-muted);
+  padding:13px 28px;border:1px solid var(--line);cursor:pointer;
+  transition:all .15s;background:transparent;
+}
+.btn-line:hover{border-color:var(--text-muted);color:var(--text)}
+
+.hero-right{
+  position:relative;display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;
+}
+.hero-image-wrap{
+  position:absolute;inset:0;
+}
+.hero-image-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  opacity:.35;filter:grayscale(60%);
+}
+.hero-image-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to right,var(--black) 0%,transparent 40%),
+             linear-gradient(to top,var(--black) 0%,transparent 40%);
+}
+.hero-counter{
+  position:absolute;bottom:48px;right:48px;
+  display:flex;flex-direction:column;align-items:flex-end;gap:4px;
+  z-index:2;
+}
+.counter-num{
+  font-family:'Oswald',sans-serif;
+  font-size:52px;font-weight:700;
+  color:var(--white);line-height:1;
+}
+.counter-label{
+  font-size:9px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+/* ── SECTION BASES ────────────────────── */
+section{padding:100px 80px}
+.sec-head{margin-bottom:64px}
+.sec-tag{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--red);margin-bottom:16px;
+}
+.sec-title{
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(40px,5vw,64px);
+  font-weight:700;letter-spacing:-1px;
+  color:var(--white);line-height:1;
+}
+.sec-line{
+  width:40px;height:2px;background:var(--red);
+  margin-top:24px;
+}
+
+/* ── POR QUE ─────────────────────────── */
+#por-que{background:var(--surface);border-top:1px solid var(--line)}
+.why-layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--line);
+  border:1px solid var(--line);
+}
+.why-item{
+  background:var(--surface);
+  padding:48px 40px;
+  border:none;transition:background .2s;
+}
+.why-item:hover{background:#110000}
+.why-num{
+  font-family:'Oswald',sans-serif;
+  font-size:64px;font-weight:700;
+  color:var(--red-dim);opacity:.4;
+  line-height:1;margin-bottom:20px;
+}
+.why-item h3{
+  font-family:'Oswald',sans-serif;
+  font-size:22px;font-weight:500;
+  letter-spacing:2px;color:var(--white);
+  margin-bottom:14px;
+}
+.why-item p{
+  font-size:12px;line-height:1.9;
+  color:var(--text-muted);
+}
+
+/* ── LORE ────────────────────────────── */
+#lore{background:var(--black);border-top:1px solid var(--line)}
+
+.lore-layout{display:grid;grid-template-columns:220px 1fr;gap:0}
+.lore-nav{
+  border-right:1px solid var(--line);
+  padding-right:0;
+  display:flex;flex-direction:column;
+}
+.lore-nav-btn{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-muted);background:transparent;
+  border:none;border-bottom:1px solid var(--line);
+  padding:20px 0;text-align:left;cursor:pointer;
+  transition:all .15s;
+  display:flex;align-items:center;gap:10px;
+}
+.lore-nav-btn::before{
+  content:'';
+  display:block;width:3px;height:3px;
+  background:transparent;border-radius:50%;
+  flex-shrink:0;transition:background .15s;
+}
+.lore-nav-btn:hover{color:var(--text)}
+.lore-nav-btn.active{color:var(--white)}
+.lore-nav-btn.active::before{background:var(--red)}
+
+.lore-content{padding:0 0 0 56px}
+.lore-panel{display:none;animation:fadein .35s}
+.lore-panel.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.lore-panel h3{
+  font-family:'Oswald',sans-serif;
+  font-size:28px;font-weight:500;
+  letter-spacing:1px;color:var(--white);
+  margin:0 0 24px;
+}
+.lore-panel p{
+  font-size:12px;line-height:2;
+  color:var(--text-muted);margin-bottom:20px;
+  max-width:640px;
+}
+.doc-block{
+  border-left:2px solid var(--red-dim);
+  padding:16px 20px;
+  background:#0a0000;
+  margin:28px 0;max-width:620px;
+}
+.doc-block-tag{
+  font-size:9px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--red);
+  margin-bottom:8px;
+}
+.doc-block p{
+  font-size:12px;color:#8a5050;
+  margin:0;font-style:italic;
+}
+
+.wip-block{
+  border:1px solid var(--line);
+  padding:48px 40px;
+  text-align:center;
+  max-width:500px;
+}
+.wip-block .wip-icon{
+  font-size:10px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--text-dim);
+  margin-bottom:16px;
+}
+.wip-block p{font-size:12px;color:var(--text-dim);margin:0}
+
+/* ── PLAYERS ─────────────────────────── */
+#players{background:var(--surface);border-top:1px solid var(--line)}
+.players-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);
+}
+.player-card{
+  background:var(--surface2);
+  padding:32px 20px 28px;
+  text-align:center;
+  transition:background .2s;
+  position:relative;
+}
+.player-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:var(--red-dim);transform:scaleX(0);
+  transition:transform .3s;
+}
+.player-card:hover::after{transform:scaleX(1)}
+.player-card:hover{background:#0f0000}
+
+.p-avatar{
+  width:64px;height:64px;
+  image-rendering:pixelated;
+  display:block;margin:0 auto 18px;
+  border:1px solid var(--line);
+}
+.p-tag{
+  font-size:9px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--red);
+  margin-bottom:6px;
+}
+.p-name{
+  font-family:'Oswald',sans-serif;
+  font-size:17px;font-weight:500;
+  letter-spacing:1px;color:var(--white);
+  margin-bottom:4px;line-height:1.2;
+}
+.p-nick{
+  font-size:10px;color:var(--text-muted);
+}
+
+/* ── CUTSCENES ───────────────────────── */
+#cutscenes{background:var(--black);border-top:1px solid var(--line)}
+.cut-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);
+}
+.cut-card{
+  background:var(--surface);text-decoration:none;
+  display:block;transition:background .2s;overflow:hidden;
+}
+.cut-card:hover{background:#0a0000}
+
+.cut-thumb{
+  position:relative;aspect-ratio:16/9;overflow:hidden;background:#050505;
+}
+.cut-thumb img{
+  width:100%;height:100%;object-fit:cover;
+  opacity:.6;transition:opacity .3s;filter:grayscale(40%);
+}
+.cut-card:hover .cut-thumb img{opacity:.85;filter:grayscale(0%)}
+
+.cut-play{
+  position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;
+}
+.cut-play-icon{
+  width:44px;height:44px;border:1px solid rgba(255,255,255,0.3);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.cut-play-icon svg{fill:white;width:16px;height:16px;margin-left:3px}
+
+.cut-ep{
+  position:absolute;top:12px;left:12px;
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);background:rgba(6,6,6,0.9);
+  padding:4px 8px;
+}
+
+.cut-info{padding:24px 24px 28px}
+.cut-title{
+  font-family:'Oswald',sans-serif;
+  font-size:22px;font-weight:500;
+  letter-spacing:1px;color:var(--white);
+  margin-bottom:8px;
+}
+.cut-desc{
+  font-size:11px;line-height:1.8;
+  color:var(--text-muted);
+}
+
+/* ── APOIAR ──────────────────────────── */
+#apoiar{background:var(--surface);border-top:1px solid var(--line)}
+.support-grid{
+  display:grid;grid-template-columns:1fr 380px;gap:80px;
+  align-items:start;
+}
+.support-list{display:flex;flex-direction:column;gap:0}
+.support-item{
+  border-bottom:1px solid var(--line);
+  padding:32px 0;
+  display:grid;grid-template-columns:auto 1fr;gap:24px;
+  align-items:start;
+}
+.support-item:first-child{padding-top:0}
+.support-index{
+  font-family:'Oswald',sans-serif;
+  font-size:13px;color:var(--red-dim);
+  font-weight:700;padding-top:4px;
+}
+.support-item h4{
+  font-family:'Oswald',sans-serif;
+  font-size:18px;font-weight:500;
+  letter-spacing:1px;color:var(--white);
+  margin-bottom:8px;
+}
+.support-item p{
+  font-size:12px;line-height:1.9;
+  color:var(--text-muted);
+}
+
+.pix-panel{
+  border:1px solid var(--line);
+  background:var(--surface2);
+  padding:36px 32px;
+  position:sticky;top:76px;
+}
+.pix-tag{
+  font-size:9px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--red);
+  margin-bottom:20px;
+}
+.pix-heading{
+  font-family:'Oswald',sans-serif;
+  font-size:28px;font-weight:700;
+  letter-spacing:1px;color:var(--white);
+  margin-bottom:8px;
+}
+.pix-sub{
+  font-size:11px;line-height:1.8;
+  color:var(--text-muted);margin-bottom:28px;
+}
+.pix-field{
+  background:var(--black);border:1px solid var(--line);
+  padding:16px;margin-bottom:12px;
+}
+.pix-field-tag{
+  font-size:9px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--text-dim);
+  margin-bottom:8px;
+}
+.pix-key{
+  font-family:'Space Mono',monospace;
+  font-size:11px;color:var(--text);
+  word-break:break-all;line-height:1.6;
+}
+.pix-btn{
+  width:100%;background:var(--red);color:#fff;
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  padding:14px;border:none;cursor:pointer;
+  transition:background .15s;
+}
+.pix-btn:hover{background:var(--red-glow)}
+.pix-btn.ok{background:#1a5c1a}
+.pix-note{
+  margin-top:16px;font-size:10px;
+  color:var(--text-dim);line-height:1.8;
+  text-align:center;
+}
+
+/* ── FOOTER ──────────────────────────── */
+footer{
+  border-top:1px solid var(--line);
+  padding:40px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-id{
+  font-family:'Oswald',sans-serif;
+  font-size:13px;font-weight:500;
+  letter-spacing:5px;color:var(--text-dim);
+}
+.footer-line{
+  font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text-dim);
+}
+
+/* ── REVEAL ──────────────────────────── */
+.r{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.r.v{opacity:1;transform:none}
+
+/* ── RESPONSIVE ──────────────────────── */
+@media(max-width:900px){
+  nav{padding:0 24px}
+  .nav-menu{display:none}
+  #home{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:60px 24px}
+  .hero-right{min-height:240px}
+  section{padding:70px 24px}
+  .why-layout{grid-template-columns:1fr}
+  .lore-layout{grid-template-columns:1fr}
+  .lore-nav{flex-direction:row;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--line);margin-bottom:40px}
+  .lore-nav-btn{border-bottom:none;padding:12px 16px}
+  .lore-content{padding:0}
+  .support-grid{grid-template-columns:1fr;gap:40px}
+  .pix-panel{position:static}
+  footer{flex-direction:column;gap:12px;padding:32px 24px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-id">LOST<em>SMP</em></div>
+  <ul class="nav-menu">
+    <li><a href="#por-que">Servidor</a></li>
+    <li><a href="#lore">Lore</a></li>
+    <li><a href="#players">Agentes</a></li>
+    <li><a href="#cutscenes">Cutscenes</a></li>
+  </ul>
+  <a href="#apoiar" class="nav-pill">Apoiar</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-left r">
+    <div class="hero-status">
+      <span class="status-dot"></span>
+      Servidor ativo
+    </div>
+    <h1 class="hero-h1">
+      LOST<br><span class="accent">SMP</span>
+    </h1>
+    <p class="hero-text">
+      Você não chegou aqui por acaso.<br>
+      Terror psicológico, investigação e uma lore que não para de crescer.
+    </p>
+    <div class="hero-actions">
+      <a href="#lore" class="btn-fill">Entrar na Lore</a>
+      <a href="#cutscenes" class="btn-line">Ver Cutscenes</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-wrap">
+      <img src="https://i.imgur.com/placeholder.png"
+           onerror="this.parentElement.style.background='#0a0000'"
+           alt="LostSMP">
+      <div class="hero-image-overlay"></div>
+    </div>
+    <div class="hero-counter">
+      <div class="counter-num" id="agent-count">12</div>
+      <div class="counter-label">Agentes registrados</div>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUE ENTRAR -->
+<section id="por-que">
+  <div class="sec-head r">
+    <div class="sec-tag">Sobre o servidor</div>
+    <h2 class="sec-title">Por que entrar</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="why-layout r">
+    <div class="why-item">
+      <div class="why-num">01</div>
+      <h3>Lore Ativa</h3>
+      <p>A narrativa existe independente de você. Eventos acontecem, entidades se manifestam, personagens somem. Você entra em algo que já está em movimento, e cada cutscene é um fragmento de uma verdade maior.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-num">02</div>
+      <h3>Terror de Verdade</h3>
+      <p>Não é estética. O ambiente, as entidades e as mecânicas do servidor foram projetados para criar tensão real. Aqui você questiona o que é seguro antes de se mover.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-num">03</div>
+      <h3>Comunidade Fechada</h3>
+      <p>Cada agente tem identidade, papel e história dentro do universo. Não existe jogador sem propósito aqui. Você não só habita o mundo, você é parte da narrativa.</p>
+    </div>
+    <div class="why-item">
+      <div class="why-num">04</div>
+      <h3>Investigação Colaborativa</h3>
+      <p>Puzzles, pistas escondidas e eventos coordenados. A verdade não é contada, ela é descoberta em conjunto, um fragmento de cada vez.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LORE -->
+<section id="lore">
+  <div class="sec-head r">
+    <div class="sec-tag">Arquivos internos</div>
+    <h2 class="sec-title">Lore</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="lore-layout r">
+    <nav class="lore-nav">
+      <button class="lore-nav-btn active" onclick="tab('coa',this)">Sobre a C.O.A</button>
+      <button class="lore-nav-btn" onclick="tab('entidades',this)">Entidades</button>
+      <button class="lore-nav-btn" onclick="tab('ilha',this)">A Ilha</button>
+      <button class="lore-nav-btn" onclick="tab('protocolos',this)">Protocolos</button>
+    </nav>
+    <div class="lore-content">
+
+      <div id="p-coa" class="lore-panel active">
+        <h3>C.O.A — Centro de Observação de Anomalias</h3>
+        <p>A C.O.A é a organização responsável pelo monitoramento, contenção e, quando necessário, eliminação de entidades e fenômenos que não deveriam existir. Fundada em circunstâncias que os próprios registros internos contradizem, a organização opera completamente fora de qualquer supervisão conhecida.</p>
+        <p>Seus agentes são recrutados de formas diversas. Alguns aceitam. Outros simplesmente acordam já dentro do sistema. Não existe pedido de demissão. Não existe saída formal. Você serve à C.O.A até que a C.O.A decida o contrário.</p>
+        <div class="doc-block">
+          <div class="doc-block-tag">Registro interno #0041-B</div>
+          <p>"A maioria dos agentes desconhece a extensão real das operações da C.O.A. Isso não é negligência. É política."</p>
+        </div>
+        <h3>Estrutura</h3>
+        <p>A organização é dividida em divisões de contenção, observação de campo e análise de anomalias. A comunicação entre divisões é limitada por design. Agentes raramente sabem mais do que o necessário para sua missão imediata. No topo da hierarquia existem nomes que não aparecem em nenhum documento. Apenas referências. Apenas sombras.</p>
+      </div>
+
+      <div id="p-entidades" class="lore-panel">
+        <div class="wip-block">
+          <div class="wip-icon">Em desenvolvimento</div>
+          <p>Esta seção ainda não está disponível.<br>Os registros de entidades permanecem classificados.</p>
+        </div>
+      </div>
+
+      <div id="p-ilha" class="lore-panel">
+        <h3>A Ilha</h3>
+        <p>A ilha não aparece em nenhum mapa antes de uma determinada data. Ela não foi descoberta. Ela surgiu. Os primeiros agentes enviados para reconhecimento reportaram coordenadas que mudavam a cada medição. O GPS registrava posições impossíveis.</p>
+        <p>O que foi construído ali, estruturas, laboratórios, instalações subterrâneas, parte foi erguida pelos próprios agentes da C.O.A. Parte não foi erguida por ninguém que conhecemos.</p>
+        <h3>Anomalias Ambientais</h3>
+        <p>Zonas da ilha exibem comportamentos físicos inexplicáveis: gravidade irregular, ausência total de som em perímetros específicos, relógios que param, animais que se recusam a entrar em certas áreas. Documentar essas anomalias é o trabalho central dos agentes de campo.</p>
+        <div class="doc-block">
+          <div class="doc-block-tag">Acesso restrito</div>
+          <p>Coordenadas da instalação principal: REDIGIDO. Liberação condicional ao Nível 3 de autorização.</p>
+        </div>
+      </div>
+
+      <div id="p-protocolos" class="lore-panel">
+        <h3>Protocolos de Contenção</h3>
+        <p>A C.O.A mantém um conjunto de protocolos para situações que ultrapassam o controle operacional padrão. Esses protocolos raramente são ativados. Quando são, os agentes em campo recebem uma instrução simples:</p>
+        <div class="doc-block">
+          <div class="doc-block-tag">Protocolo ativo</div>
+          <p>"Não questione. Não documente. Execute."</p>
+        </div>
+        <h3>Protocolo Vermelho</h3>
+        <p>Reservado para anomalias de escala irrestrita. Implica na possível evacuação ou neutralização completa da zona de contenção, incluindo pessoal presente. Nenhum agente que participou de uma operação Protocolo Vermelho voltou para dar detalhes.</p>
+        <h3>Protocolo Silêncio</h3>
+        <p>Ativado quando uma entidade demonstra capacidade de comunicação intencional com agentes. O objetivo não é eliminar. É observar quanto tempo o agente mantém a sanidade operacional antes da contaminação cognitiva se tornar irreversível.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PLAYERS -->
+<section id="players">
+  <div class="sec-head r">
+    <div class="sec-tag">Registro de campo</div>
+    <h2 class="sec-title">Agentes</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="players-grid r" id="pgrid"></div>
+</section>
+
+<!-- CUTSCENES -->
+<section id="cutscenes">
+  <div class="sec-head r">
+    <div class="sec-tag">Transmissões recuperadas</div>
+    <h2 class="sec-title">Cutscenes</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cut-grid r" id="cgrid"></div>
+</section>
+
+<!-- APOIAR -->
+<section id="apoiar">
+  <div class="sec-head r">
+    <div class="sec-tag">Suporte ao projeto</div>
+    <h2 class="sec-title">Apoiar</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="support-grid r">
+    <div>
+      <p style="font-size:13px;line-height:2;color:var(--text-muted);margin-bottom:48px;max-width:560px;">O LostSMP é um projeto independente, construído por pessoas que acreditam que Minecraft pode ser mais do que um jogo. Sem patrocinadores. Sem anúncios. Cada centavo vai diretamente para manter e melhorar a experiência.</p>
+      <div class="support-list">
+        <div class="support-item">
+          <div class="support-index">01</div>
+          <div>
+            <h4>Host e Infraestrutura</h4>
+            <p>Todo valor recebido é revertido para pagamento e upgrade da hospedagem do servidor. Estabilidade e performance para todos os agentes em campo, sem interrupções.</p>
+          </div>
+        </div>
+        <div class="support-item">
+          <div class="support-index">02</div>
+          <div>
+            <h4>Investimento na Lore</h4>
+            <p>Cutscenes, builds, eventos e expansões narrativas exigem tempo e recursos. Seu apoio torna possível criar experiências mais imersivas e elaboradas.</p>
+          </div>
+        </div>
+        <div class="support-item">
+          <div class="support-index">03</div>
+          <div>
+            <h4>Transparência Total</h4>
+            <p>Nenhum valor vai para lucro pessoal. O servidor existe enquanto a comunidade existir. O que você contribui é o que mantém este mundo funcionando.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pix-panel">
+      <div class="pix-tag">Chave Pix</div>
+      <div class="pix-heading">Contribuir</div>
+      <p class="pix-sub">Qualquer valor é bem-vindo. Não existe mínimo, existe intenção.</p>
+      <div class="pix-field">
+        <div class="pix-field-tag">Chave (UUID)</div>
+        <div class="pix-key" id="pkey">e8a29e07-0ca8-4a79-a092-589b360174bc</div>
+      </div>
+      <button class="pix-btn" id="pbtn" onclick="cpx()">Copiar chave</button>
+      <p class="pix-note">Destinado exclusivamente à manutenção do servidor.<br>Sem intermediários.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-id">LOST SMP</div>
+  <div class="footer-line">Você nunca deveria ter chegado aqui.</div>
+</footer>
+
+<script>
+const players=[
+  {agent:"Melissa Rodrigues",nick:"Bruhwinchester"},
+  {agent:"Esperanza Karam",nick:"NanYelo_"},
+  {agent:"Disco Karam",nick:"DIZC0_"},
+  {agent:"Akira",nick:"HFantin"},
+  {agent:"Kyn",nick:"okynn_"},
+  {agent:"Nia",nick:"Nia"},
+  {agent:"Mael",nick:"Portinari"},
+  {agent:"Jae",nick:"Extrusa"},
+  {agent:"Jonathan",nick:"Pontiffy"},
+  {agent:"Eden Powell",nick:"Aikidai"},
+  {agent:"Constantino",nick:"TheHaunted"},
+  {agent:"Otto",nick:"Darkzitcho"},
+];
+document.getElementById('agent-count').textContent=players.length;
+const pg=document.getElementById('pgrid');
+players.forEach(p=>{
+  const c=document.createElement('div');
+  c.className='player-card';
+  c.innerHTML=`<img class="p-avatar" src="https://mc-heads.net/head/${p.nick}/64" alt="${p.agent}" onerror="this.src='https://mc-heads.net/head/steve/64'"><div class="p-tag">Agente</div><div class="p-name">${p.agent}</div><div class="p-nick">@${p.nick}</div>`;
+  pg.appendChild(c);
+});
+
+const cuts=[
+  {ep:"EP 01",title:"The Watcher",desc:"O primeiro registro confirmado. Algo observa. Algo sempre esteve observando.",url:"https://youtu.be/kylBZSWogCE",id:"kylBZSWogCE"},
+  {ep:"EP 02",title:"Tudo Recomeça Pelo Sangue",desc:"Todo recomeço tem um custo. A C.O.A sabia disso. Os agentes descobriram tarde demais.",url:"https://youtu.be/zcTyN3Xcqa0",id:"zcTyN3Xcqa0"},
+  {ep:"EP 03",title:"Recomeço",desc:"Depois do sangue, resta a pergunta: o que recomeça, o mundo ou o ciclo?",url:"https://youtu.be/e8llk8qDvGo",id:"e8llk8qDvGo"},
+];
+const cg=document.getElementById('cgrid');
+cuts.forEach(c=>{
+  const el=document.createElement('a');
+  el.className='cut-card';el.href=c.url;el.target='_blank';el.rel='noopener';
+  el.innerHTML=`<div class="cut-thumb"><img src="https://img.youtube.com/vi/${c.id}/mqdefault.jpg" alt="${c.title}" loading="lazy"><div class="cut-play"><div class="cut-play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="cut-ep">${c.ep}</div></div><div class="cut-info"><div class="cut-title">${c.title}</div><div class="cut-desc">${c.desc}</div></div>`;
+  cg.appendChild(el);
+});
+
+function tab(id,btn){
+  document.querySelectorAll('.lore-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.lore-nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function cpx(){
+  navigator.clipboard.writeText(document.getElementById('pkey').textContent).then(()=>{
+    const b=document.getElementById('pbtn');
+    b.textContent='Copiado!';b.classList.add('ok');
+    setTimeout(()=>{b.textContent='Copiar chave';b.classList.remove('ok')},2500);
+  });
+}
+
+const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')})},{threshold:.08});
+document.querySelectorAll('.r').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
